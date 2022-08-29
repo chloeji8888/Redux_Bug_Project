@@ -18,15 +18,17 @@ const api = ({dispatch}) => next=> async action => {
         return next(action)
     }
 
-    const{url, method,data,onError,onSuccess, onStart} = action.payload
+    const{url, method,data,onSuccess, onStart, onError} = action.payload
+
     if(onStart){
         dispatch({type: onStart});
     }
+
     next(action);
 
     try{
         const response = await axios.request({
-            baseURL: 'http://localhost:9001/api',
+            baseURL: 'http://localhost:9002/api',
             url,
             method,
             data,
@@ -43,7 +45,7 @@ const api = ({dispatch}) => next=> async action => {
         }
 
     }catch(error){
-        dispatch(action.apiCallFailed(error));
+        dispatch(actions.apiCallFailed(error));
 
         if(onError){
             dispatch(
