@@ -11,6 +11,7 @@ const store = configureAppStore();
 //     console.log(getState());
 // })
 store.dispatch(loadBugs());
+setTimeout(() => store.dispatch(loadBugs()), 2000)
 // store.dispatch(actions.apiCallBegan({url:'/bugs',
 // onSuccess: 'bugs/bugsReceived'
 // }))
