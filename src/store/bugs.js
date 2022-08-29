@@ -15,8 +15,14 @@ const slice = createSlice({
     },
 
     reducers:{
+
+        bugRequested:(state,action)=>{
+            state.loading = true;
+        },
+
         bugsReceived:(state,action)=>{
             state.list = action.payload;
+            state.loading = false;
         },
         bugAssignedToUser:(state,action)=>{
             const {bugId, userId} = action.payload;
@@ -45,12 +51,12 @@ const slice = createSlice({
         }
     }
 })
-export const {bugAdded, bugRemoved, bugResolved, bugAssignedToUser, bugsReceived} = slice.actions;
+export const {bugAdded, bugRemoved, bugResolved, bugAssignedToUser, bugsReceived, bugRequested} = slice.actions;
 export default slice.reducer;
 
 const url = '/bugs'
 export const loadBugs = () => apiCallBegan(
-    {url,
+    {url, onStart: bugRequested.type,
     onSuccess: bugsReceived.type
     }
     )
