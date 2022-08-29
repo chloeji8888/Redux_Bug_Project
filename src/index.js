@@ -10,7 +10,7 @@ const store = configureAppStore();
 //     dispatch({type:'bugReceived', bugs:[1,2,3]}),
 //     console.log(getState());
 // })
-store.dispatch(loadBugs())
+store.dispatch(loadBugs());
 // store.dispatch(actions.apiCallBegan({url:'/bugs',
 // onSuccess: 'bugs/bugsReceived'
 // }))
