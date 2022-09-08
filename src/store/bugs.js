@@ -5,8 +5,6 @@ import { apiCallBegan } from "./api";
 import moment from "moment";
 import projects from "./projects";
 
-let lastId = 0;
-
 const slice = createSlice({
     name: 'bugs',
     initialState: {
@@ -32,7 +30,7 @@ const slice = createSlice({
         },
 
         bugAssignedToUser:(state,action)=>{
-            const {bugId, userId} = action.payload;
+            const {id: bugId, userId} = action.payload;
             const index = state.list.findIndex(bug => bug.id === bugId);
             state.list[index].userId = userId;
         },
@@ -40,11 +38,7 @@ const slice = createSlice({
         //map actions => action handlers
         bugAdded:(state,action)=>{
             state.list.push(
-                {
-                id: ++lastId, 
-                description: action.payload.description,
-                resolved: false
-                }
+                action.payload
             )
         },
 
@@ -58,7 +52,7 @@ const slice = createSlice({
         }
     }
 })
-export const {bugAdded, bugRemoved, bugResolved, bugAssignedToUser, bugsReceived, bugRequested, bugsRequestFailed} = slice.actions;
+const {bugAdded, bugRemoved, bugResolved, bugAssignedToUser, bugsReceived, bugRequested, bugsRequestFailed} = slice.actions;
 export default slice.reducer;
 
 const url = '/bugs'
@@ -75,27 +69,36 @@ export const loadBugs = () => (dispatch, getState) =>{
             onError:bugsRequestFailed.type
         }
         ))
-}
-// export const loadBugs = () => apiCallBegan(
-//     {   
-//         url, 
-//         onStart: bugRequested.type,
-//         onSuccess: bugsReceived.type,
-//         onError:bugsRequestFailed.type
-//     }
-//     )
 
-//selector function
-// export const getUnresolvedBugs = state => 
-// state.entities.bugs.filter(bug => !bug.resolved);
+};
 
-//Memoization
-//bugs => get unresolved bugs from the cache
+export const addBug = bug => apiCallBegan({
+    url,
+    method:"post",
+    data: bug,
+    onSuccess:bugAdded.type,
+})
+
+export const resolveBug = id => apiCallBegan({
+    url: url + '/' + id,
+    method:"patch",
+    data:{resolved:true},
+    onSuccess: bugResolved.type
+})
+
+export const assignBugToUser = (bugId, userId) => apiCallBegan({
+    url: url + '/' + bugId,
+    method: "patch",
+    data: {userId},
+    onSuccess: bugAssignedToUser.type,
+})
+
 export const getUnresolvedBugs = createSelector(
     state => state.entities.bugs,
     state => state.entities.projects,
     (bugs,projects) => bugs.filter(bug => !bug.resolved)
 )
+
 
 export const getBugsFromUser = userId => createSelector(
     state => state.entities.bugs,

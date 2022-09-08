@@ -1,9 +1,6 @@
 import configureAppStore from "./store/configureStore";
-import { projectAdded } from "./store/projects";
-import { bugAdded, bugResolved, getUnresolvedBugs, bugAssignedToUser, getBugsFromUser} from "./store/bugs"; 
-import { userAdded } from "./store/user";
-import * as actions from './store/api'
-import { loadBugs } from "./store/bugs";
+import { loadBugs,assignBugToUser } from "./store/bugs";
+
 const store = configureAppStore();
 
 // store.dispatch((dispatch,getState)=>{
@@ -11,7 +8,9 @@ const store = configureAppStore();
 //     console.log(getState());
 // })
 store.dispatch(loadBugs());
-setTimeout(() => store.dispatch(loadBugs()), 2000)
+setTimeout(() => store.dispatch(assignBugToUser(1,4)),2000)
+
+
 // store.dispatch(actions.apiCallBegan({url:'/bugs',
 // onSuccess: 'bugs/bugsReceived'
 // }))
